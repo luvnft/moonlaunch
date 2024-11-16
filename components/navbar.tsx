@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Rocket, Coins, User, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
+
 export default function Navbar({
   connect_wallet,
 }: {
   connect_wallet: () => void;
 }) {
   const { theme, setTheme } = useTheme();
-  const { wallets } = useWallets();
+  // const { wallets } = useWallets();
 
   return (
     <nav className="border-b">

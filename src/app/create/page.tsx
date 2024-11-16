@@ -26,6 +26,7 @@ import {
 
 import { useState } from "react";
 import Image from "next/image";
+import Navbar from "@/components/navbar";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -63,6 +64,7 @@ export default function CreatePage() {
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+  const [finalImage, setFinalImage] = useState();
   const [prediction, setPrediction] = useState(null);
   const [error, setError] = useState(null);
 
@@ -107,8 +109,9 @@ export default function CreatePage() {
 
   return (
     <div className="container mx-auto py-10">
-
-      <Card className="max-w-2xl mx-auto">
+      <Navbar />
+      {!finalImage ?
+      <Card className="max-w-2xl mx-auto mt-6">
         <CardHeader>
           <CardTitle>Create Your Memecoin</CardTitle>
           <CardDescription>
@@ -117,18 +120,29 @@ export default function CreatePage() {
         </CardHeader>
         <CardContent>
 
-        <form className="w-full flex" onSubmit={handleSubmit}>
-            <input
+          <form className="w-full flex flex-col" onSubmit={handleSubmit}>
+            <Input
               type="text"
               className="flex-grow"
               name="prompt"
-              placeholder="Enter a prompt to display an image"
+              placeholder="Enter a prompt to generate a meme"
             />
-            <button className="button" type="submit">
-              Go!
-            </button>
+
+              {prediction?.status === ""
+                ? <Button type="submit" className="w-full mt-4">Generate Meme</Button>
+                : prediction?.status === "starting" || prediction?.status === "processing"
+                  ? <Button disabled className="w-full mt-4">Generating...</Button>
+                  : prediction?.status === "succeeded" ? <Button type="submit" className="w-full mt-4">Generate Meme Again</Button>
+                :<Button type="submit" className="w-full mt-4">Generate Meme</Button>
+                }
+
+            {prediction?.status == "succeeded" &&
+              <Button type="submit" onClick={() => setFinalImage(true)} className="w-full mt-4">
+              Launch This Meme
+            </Button>
+            }
           </form>
-          
+
           <Form {...form}>
             <form className="space-y-8">
               {prediction && (
@@ -144,7 +158,7 @@ export default function CreatePage() {
                       />
                     </div>
                   )}
-                  <p className="py-3 text-sm opacity-50">status: {prediction.status}</p>
+                  {/* <p className="py-3 text-sm opacity-50">status: {prediction.status}</p> */}
                 </>
               )}
 
@@ -156,10 +170,10 @@ export default function CreatePage() {
 
         </CardContent>
       </Card>
-
-      <Card className="max-w-2xl mx-auto">
+      :
+      <Card className="max-w-2xl mx-auto mt-6">
         <CardHeader>
-          <CardTitle>Final Steps</CardTitle>
+          <CardTitle>Final Step</CardTitle>
           <CardDescription>
             Fill in the details below to launch your own memecoin
           </CardDescription>
@@ -267,6 +281,8 @@ export default function CreatePage() {
           </Form>
         </CardContent>
       </Card>
+      }
+
     </div>
   );
 }
