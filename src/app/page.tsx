@@ -3,15 +3,20 @@
 import { Button } from "@/components/ui/button";
 import { Rocket, TrendingUp, Shield } from "lucide-react";
 import Link from "next/link";
-import { PrivyProvider } from "@privy-io/react-auth";
 import Navbar from "@/components/navbar";
-import { Signer } from "ethers";
+import { Interface, Signer, InterfaceAbi } from "ethers";
 import { useState } from "react";
 import { ethers } from "ethers";
-//  hello
+import TokenFactoryABI from "../../abi/TokenFactory.json";
+import { useSigner } from "./context/signerContext";
+
 export default function Home() {
   const app_id = "cm3jx7dfj071frmti0390p7cc";
-  const [signer, setSigner] = useState<Signer | null>(null);
+  const TokenFactoryAddr = "0x42b93a5eE5839Ff8436c3CF1F310b07fAeCc0834";
+
+  const { signer, setSigner } = useSigner();
+
+  // const [signer, setSigner] = useState<Signer | null>(null);
   const [provider, setProvider] = useState<any>(null);
 
   const connect_wallet = async () => {
@@ -23,9 +28,9 @@ export default function Home() {
       provider = ethers.getDefaultProvider();
       setProvider(provider);
     } else {
-      // provider = new ethers.BrowserProvider(window.ethereum);
-      // signer = await provider.getSigner();
-      // setSigner(signer);
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+      setSigner(signer);
     }
   };
 
@@ -47,7 +52,8 @@ export default function Home() {
     // >
     <>
       <Navbar connect_wallet={connect_wallet} />
-
+      <button onClick={connect_wallet}>Connect Wallet</button>
+      <br />
       <div className="flex flex-col min-h-[calc(100vh-4rem)]">
         <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-16 bg-gradient-to-b from-background to-secondary/20">
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
@@ -99,7 +105,7 @@ export default function Home() {
           </div>
         </section>
       </div>
-      </>
+    </>
     // </PrivyProvider>
   );
 }

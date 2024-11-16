@@ -9,11 +9,9 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 export default function Navbar({
   connect_wallet,
 }: {
-  connect_wallet: () => void;
+  connect_wallet?: () => void;
 }) {
   const { theme, setTheme } = useTheme();
-  // const { wallets } = useWallets();
-
   return (
     <nav className="border-b">
       <div className="flex h-16 items-center px-4 container mx-auto">

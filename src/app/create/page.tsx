@@ -27,6 +27,9 @@ import {
 import { useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/navbar";
+import { useSigner } from "../context/signerContext";
+import { ethers, InterfaceAbi } from "ethers";
+import TokenFactoryABI from "../../../abi/TokenFactory.json";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -39,13 +42,18 @@ const formSchema = z.object({
 });
 
 export default function CreatePage() {
+  const TokenFactoryAddr = "0x42b93a5eE5839Ff8436c3CF1F310b07fAeCc0834";
+
+  const { signer } = useSigner();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       ticker: "",
       description: "",
-      image: "https://replicate.delivery/pbxt/HzjMKjJttfUyb6xtwsfps1SLsANZDemXLzknLZOBYZsnaOjnA/out-0.png",
+      image:
+        "https://replicate.delivery/pbxt/HzjMKjJttfUyb6xtwsfps1SLsANZDemXLzknLZOBYZsnaOjnA/out-0.png",
       twitter: "",
       telegram: "",
       website: "",
@@ -60,15 +68,15 @@ export default function CreatePage() {
     console.log(values);
   }
 
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const sleep = (ms: any) => new Promise((r) => setTimeout(r, ms));
 
   const [finalImage, setFinalImage] = useState(true);
-  const [prediction, setPrediction] = useState(null);
+  const [prediction, setPrediction] = useState<any>(null);
   const [error, setError] = useState(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log("run")
+    console.log("run");
     const response = await fetch("/api/predictions", {
       method: "POST",
       headers: {
@@ -79,14 +87,14 @@ export default function CreatePage() {
       }),
     });
 
-    console.log(response)
+    console.log(response);
     let prediction = await response.json();
     if (response.status !== 201) {
       setError(prediction.detail);
       return;
     }
     setPrediction(prediction);
-    console.log({ prediction })
+    console.log({ prediction });
 
     while (
       prediction.status !== "succeeded" &&
@@ -95,7 +103,7 @@ export default function CreatePage() {
       await sleep(1000);
       const response = await fetch("/api/predictions/" + prediction.id);
       prediction = await response.json();
-      console.log(prediction)
+      console.log(prediction);
       if (response.status !== 200) {
         setError(prediction.detail);
         return;
@@ -105,184 +113,221 @@ export default function CreatePage() {
     }
   };
 
+  const create_token = async () => {
+    const contract = new ethers.Contract(
+      TokenFactoryAddr,
+      TokenFactoryABI.abi as InterfaceAbi,
+      signer
+    );
+
+    const addr = await signer?.getAddress();
+    console.log({ addr });
+    const res = await contract.create_token(
+      10_000_000,
+      "sample token",
+      "SMPLTKN"
+    );
+    console.log({ res });
+  };
+
   return (
     <>
       <Navbar />
-    <div className="container mx-auto py-10">
-      {!finalImage ?
-      <Card className="max-w-2xl mx-auto mt-6">
-        <CardHeader>
-          <CardTitle>Create Your Memecoin</CardTitle>
-          <CardDescription>
-            Fill in the details below to launch your own memecoin
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <div className="container mx-auto py-10">
+        {!finalImage ? (
+          <Card className="max-w-2xl mx-auto mt-6">
+            <CardHeader>
+              <CardTitle>Create Your Memecoin</CardTitle>
+              <CardDescription>
+                Fill in the details below to launch your own memecoin
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form className="w-full flex flex-col" onSubmit={handleSubmit}>
+                <Input
+                  type="text"
+                  className="flex-grow"
+                  name="prompt"
+                  placeholder="Enter a prompt to generate a meme"
+                />
 
-          <form className="w-full flex flex-col" onSubmit={handleSubmit}>
-            <Input
-              type="text"
-              className="flex-grow"
-              name="prompt"
-              placeholder="Enter a prompt to generate a meme"
-            />
+                {prediction?.status === "" ? (
+                  <Button type="submit" className="w-full mt-4">
+                    Generate Meme
+                  </Button>
+                ) : prediction?.status === "starting" ||
+                  prediction?.status === "processing" ? (
+                  <Button disabled className="w-full mt-4">
+                    Generating...
+                  </Button>
+                ) : prediction?.status === "succeeded" ? (
+                  <Button type="submit" className="w-full mt-4">
+                    Generate Meme Again
+                  </Button>
+                ) : (
+                  <Button type="submit" className="w-full mt-4">
+                    Generate Meme
+                  </Button>
+                )}
 
-              {prediction?.status === ""
-                ? <Button type="submit" className="w-full mt-4">Generate Meme</Button>
-                : prediction?.status === "starting" || prediction?.status === "processing"
-                  ? <Button disabled className="w-full mt-4">Generating...</Button>
-                  : prediction?.status === "succeeded" ? <Button type="submit" className="w-full mt-4">Generate Meme Again</Button>
-                :<Button type="submit" className="w-full mt-4">Generate Meme</Button>
-                }
+                {prediction?.status == "succeeded" && (
+                  <Button
+                    type="submit"
+                    onClick={() => setFinalImage(true)}
+                    className="w-full mt-4"
+                  >
+                    Launch This Meme
+                  </Button>
+                )}
+              </form>
 
-            {prediction?.status == "succeeded" &&
-              <Button type="submit" onClick={() => setFinalImage(true)} className="w-full mt-4">
-              Launch This Meme
-            </Button>
-            }
-          </form>
-
-          <Form {...form}>
-            <form className="space-y-8">
-              {prediction && (
-                <>
-                  {prediction.output && (
-                    <div className="image-wrapper mt-5">
-                      <Image
-                        src={prediction.output[prediction.output.length - 1]}
-                        alt="output"
-                        sizes="100vw"
-                        height={768}
-                        width={768}
-                      />
-                    </div>
+              <Form {...form}>
+                <form className="space-y-8">
+                  {prediction && (
+                    <>
+                      {prediction.output && (
+                        <div className="image-wrapper mt-5">
+                          <Image
+                            src={
+                              prediction.output[prediction.output.length - 1]
+                            }
+                            alt="output"
+                            sizes="100vw"
+                            height={768}
+                            width={768}
+                          />
+                        </div>
+                      )}
+                      {/* <p className="py-3 text-sm opacity-50">status: {prediction.status}</p> */}
+                    </>
                   )}
-                  {/* <p className="py-3 text-sm opacity-50">status: {prediction.status}</p> */}
-                </>
-              )}
 
-              {/* <Button className="w-full" onSubmit={handleSubmit}>
+                  {/* <Button className="w-full" onSubmit={handleSubmit}>
                 Generate Meme
               </Button> */}
-            </form>
-          </Form>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="max-w-2xl mx-auto mt-6">
+            <CardHeader>
+              <CardTitle>Final Step</CardTitle>
+              <CardDescription>
+                Fill in the details below to launch your own memecoin
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Token Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="MoonRocket" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Choose a catchy name for your token
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-        </CardContent>
-      </Card>
-      :
-      <Card className="max-w-2xl mx-auto mt-6">
-        <CardHeader>
-          <CardTitle>Final Step</CardTitle>
-          <CardDescription>
-            Fill in the details below to launch your own memecoin
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Token Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="MoonRocket" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Choose a catchy name for your token
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="ticker"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ticker Symbol</FormLabel>
+                        <FormControl>
+                          <Input placeholder="MOON" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          A short symbol for your token (e.g., BTC, ETH)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="ticker"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ticker Symbol</FormLabel>
-                    <FormControl>
-                      <Input placeholder="MOON" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      A short symbol for your token (e.g., BTC, ETH)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Tell us about your memecoin..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Tell us about your memecoin..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="twitter"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Twitter URL</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="https://twitter.com/..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="twitter"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Twitter URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://twitter.com/..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="telegram"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telegram URL</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://t.me/..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="telegram"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telegram URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://t.me/..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="website"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Website URL</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="website"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Website URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" className="w-full">
-                Create Token
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-      }
-
-    </div>
+                  <Button type="submit" className="w-full">
+                    Create Token
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </>
   );
 }
