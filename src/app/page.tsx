@@ -7,7 +7,6 @@ import Navbar from "@/components/navbar";
 import { Interface, Signer, InterfaceAbi } from "ethers";
 import { useState } from "react";
 import { ethers } from "ethers";
-import TokenFactoryABI from "../../abi/TokenFactory.json";
 import { useSigner } from "./context/signerContext";
 
 export default function Home() {
@@ -18,6 +17,7 @@ export default function Home() {
 
   // const [signer, setSigner] = useState<Signer | null>(null);
   const [provider, setProvider] = useState<any>(null);
+  const blockScoutURL = "";
 
   const connect_wallet = async () => {
     let signer = null;
