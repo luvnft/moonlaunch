@@ -5,13 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Rocket, Coins, User, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useState } from "react";
+import Capsule, { CapsuleModal, Environment } from "@usecapsule/react-sdk";
+import "@usecapsule/react-sdk/styles.css";
+import "@usecapsule/evm-wallet-connectors";
+import dynamic from "next/dynamic";
 
 export default function Navbar({
   connect_wallet,
 }: {
   connect_wallet: () => void;
 }) {
+  const capsule = new Capsule(Environment.BETA, process.env.REACT_APP_CAPSULE_API_KEY);
   const { theme, setTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+  const CapsuleModal = dynamic(
+    () => import("@usecapsule/react-sdk")
+    .then((mod) => mod.CapsuleModal), { ssr: false }
+    );
   // const { wallets } = useWallets();
 
   return (
@@ -51,6 +62,22 @@ export default function Navbar({
           >
             Connect Wallet
           </Button>
+
+          {/* <button onClick={() => setIsOpen(true)}>Sign in with Capsule</button>
+
+          <CapsuleModal
+            capsule={capsule}
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            appName="Your App Name"
+            logo="https://yourapp.com/logo.png"
+            theme={{
+              backgroundColor: "#ffffff",
+              foregroundColor: "#000000",
+            }}
+            oAuthMethods={["GOOGLE", "TWITTER", "DISCORD"]}
+            externalWallets={["METAMASK", "PHANTOM"]}
+          /> */}
 
           {/* <Button
             variant="ghost"

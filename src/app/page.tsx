@@ -8,11 +8,13 @@ import Navbar from "@/components/navbar";
 import { Signer } from "ethers";
 import { useState } from "react";
 import { ethers } from "ethers";
-//  hello
+
+
 export default function Home() {
   const app_id = "cm3jx7dfj071frmti0390p7cc";
   const [signer, setSigner] = useState<Signer | null>(null);
   const [provider, setProvider] = useState<any>(null);
+  const blockScoutURL = "";
 
   const connect_wallet = async () => {
     let signer = null;
