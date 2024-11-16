@@ -49,7 +49,6 @@ export default function Navbar({
             className="flex items-center"
             onClick={connect_wallet}
           >
-            <User className="mr-2 h-4 w-4" />
             Connect Wallet
           </Button>
 

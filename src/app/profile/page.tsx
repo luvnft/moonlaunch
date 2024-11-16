@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Navbar from "@/components/navbar";
 
 const MOCK_PORTFOLIO = {
   totalValue: "12,450.00",
@@ -53,6 +54,8 @@ const MOCK_PORTFOLIO = {
 
 export default function ProfilePage() {
   return (
+    <>
+    <Navbar/>
     <div className="container mx-auto py-10">
       <div className="flex flex-col space-y-8">
         <div className="flex flex-col space-y-4">
@@ -154,5 +157,6 @@ export default function ProfilePage() {
         </Tabs>
       </div>
     </div>
+    </>
   );
 }

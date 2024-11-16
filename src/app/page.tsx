@@ -52,7 +52,7 @@ export default function Home() {
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
             Launch Your Memecoin to the Moon 🚀
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mb-8">
+          <p className="text-xl text-muted-foreground max-w-2xl mb-4">
             Create, launch, and trade memecoins in minutes. Join the next
             generation of crypto innovation.
           </p>
@@ -60,7 +60,7 @@ export default function Home() {
             <Link href="/create">
               <Button size="lg" className="text-lg">
                 <Rocket className="mr-2 h-5 w-5" />
-                Launch Your Token
+                Launch AI Meme
               </Button>
             </Link>
             <Link href="/explore">
@@ -78,7 +78,7 @@ export default function Home() {
               <Rocket className="h-12 w-12 mb-4 text-primary" />
               <h3 className="text-xl font-semibold mb-2">Easy Launch</h3>
               <p className="text-muted-foreground">
-                Create your memecoin in minutes with our simple launch platform
+                Create your memecoin in minutes with our simple AI launchpad
               </p>
             </div>
             <div className="flex flex-col items-center text-center p-6 rounded-lg border bg-card">
@@ -90,9 +90,9 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-center text-center p-6 rounded-lg border bg-card">
               <Shield className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-semibold mb-2">Secure Platform</h3>
+              <h3 className="text-xl font-semibold mb-2">Copy Traders</h3>
               <p className="text-muted-foreground">
-                Built with security in mind to protect your investments
+                Copy trade the top traders on our platform securely
               </p>
             </div>
           </div>

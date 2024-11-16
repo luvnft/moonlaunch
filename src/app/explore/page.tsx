@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
+import Navbar from "@/components/navbar";
 
 const MOCK_TOKENS = [
   {
@@ -39,7 +40,10 @@ export default function ExplorePage() {
   const [sortBy, setSortBy] = useState("marketCap");
 
   return (
+    <>
+      <Navbar />
     <div className="container mx-auto py-10">
+
       <div className="flex flex-col space-y-4">
         <h1 className="text-4xl font-bold">Explore Tokens</h1>
         
@@ -109,5 +113,7 @@ export default function ExplorePage() {
         </div>
       </div>
     </div>
+    </>
+
   );
 }

@@ -31,8 +31,7 @@ import Navbar from "@/components/navbar";
 const formSchema = z.object({
   name: z.string().min(2).max(50),
   ticker: z.string().min(2).max(10),
-  description: z.string().min(10).max(500),
-  totalSupply: z.string().regex(/^\d+$/, "Must be a valid number"),
+  description: z.string().min(2).max(500).optional(),
   image: z.string().url("Must be a valid URL"),
   twitter: z.string().url("Must be a valid URL").optional(),
   telegram: z.string().url("Must be a valid URL").optional(),
@@ -46,8 +45,7 @@ export default function CreatePage() {
       name: "",
       ticker: "",
       description: "",
-      totalSupply: "",
-      image: "",
+      image: "https://replicate.delivery/pbxt/HzjMKjJttfUyb6xtwsfps1SLsANZDemXLzknLZOBYZsnaOjnA/out-0.png",
       twitter: "",
       telegram: "",
       website: "",
@@ -64,7 +62,7 @@ export default function CreatePage() {
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  const [finalImage, setFinalImage] = useState();
+  const [finalImage, setFinalImage] = useState(true);
   const [prediction, setPrediction] = useState(null);
   const [error, setError] = useState(null);
 
@@ -108,8 +106,9 @@ export default function CreatePage() {
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <>
       <Navbar />
+    <div className="container mx-auto py-10">
       {!finalImage ?
       <Card className="max-w-2xl mx-auto mt-6">
         <CardHeader>
@@ -284,5 +283,6 @@ export default function CreatePage() {
       }
 
     </div>
+    </>
   );
 }
