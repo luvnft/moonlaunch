@@ -1,15 +1,16 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from '@/components/navbar';
+import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
+import { PrivyProvider } from "@privy-io/react-auth";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'MoonLaunch - Memecoin Launchpad',
-  description: 'Create and launch your own memecoin in minutes',
+  title: "MoonLaunch - Memecoin Launchpad",
+  description: "Create and launch your own memecoin in minutes",
 };
 
 export default function RootLayout({
@@ -27,7 +28,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-screen bg-background">
-            <Navbar />
             <main>{children}</main>
           </div>
           <Toaster />
