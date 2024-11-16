@@ -59,7 +59,7 @@ export default function CreatePage() {
 
   const [prediction, setPrediction] = useState(null);
   const [error, setError] = useState(null);
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("run")
@@ -80,8 +80,8 @@ export default function CreatePage() {
       return;
     }
     setPrediction(prediction);
-    console.log({prediction})
- 
+    console.log({ prediction })
+
     while (
       prediction.status !== "succeeded" &&
       prediction.status !== "failed"
@@ -110,27 +110,21 @@ export default function CreatePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* <Form {...form}>
+
+        <form className="w-full flex" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              className="flex-grow"
+              name="prompt"
+              placeholder="Enter a prompt to display an image"
+            />
+            <button className="button" type="submit">
+              Go!
+            </button>
+          </form>
+          
+          <Form {...form}>
             <form className="space-y-8">
-
-              <FormField
-                name="description"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        name="prompt"
-                        placeholder="Tell us about your memecoin..."
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {error && <div>{error}</div>}
-
               {prediction && (
                 <>
                   {prediction.output && (
@@ -148,23 +142,12 @@ export default function CreatePage() {
                 </>
               )}
 
-              <Button className="w-full" onSubmit={handleSubmit}>
+              {/* <Button className="w-full" onSubmit={handleSubmit}>
                 Generate Meme
-              </Button>
+              </Button> */}
             </form>
-          </Form> */}
+          </Form>
 
-<form className="w-full flex" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          className="flex-grow"
-          name="prompt"
-          placeholder="Enter a prompt to display an image"
-        />
-        <button className="button" type="submit">
-          Go!
-        </button>
-      </form>
         </CardContent>
       </Card>
 
