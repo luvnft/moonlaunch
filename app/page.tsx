@@ -1,6 +1,9 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Rocket, TrendingUp, Shield } from "lucide-react";
 import Link from "next/link";
+
 
 export default function Home() {
   return (

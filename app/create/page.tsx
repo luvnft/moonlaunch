@@ -18,6 +18,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { useState } from "react";
+import Image from "next/image";
+
 const formSchema = z.object({
   name: z.string().min(2).max(50),
   ticker: z.string().min(2).max(10),
@@ -52,11 +55,122 @@ export default function CreatePage() {
     console.log(values);
   }
 
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const [prediction, setPrediction] = useState(null);
+  const [error, setError] = useState(null);
+ 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("run")
+    const response = await fetch("/api/predictions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: e.target.prompt.value,
+      }),
+    });
+
+    console.log(response)
+    let prediction = await response.json();
+    if (response.status !== 201) {
+      setError(prediction.detail);
+      return;
+    }
+    setPrediction(prediction);
+    console.log({prediction})
+ 
+    while (
+      prediction.status !== "succeeded" &&
+      prediction.status !== "failed"
+    ) {
+      await sleep(1000);
+      const response = await fetch("/api/predictions/" + prediction.id);
+      prediction = await response.json();
+      console.log(prediction)
+      if (response.status !== 200) {
+        setError(prediction.detail);
+        return;
+      }
+      console.log({ prediction: prediction });
+      setPrediction(prediction);
+    }
+  };
+
   return (
     <div className="container mx-auto py-10">
+
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Create Your Memecoin</CardTitle>
+          <CardDescription>
+            Fill in the details below to launch your own memecoin
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {/* <Form {...form}>
+            <form className="space-y-8">
+
+              <FormField
+                name="description"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        name="prompt"
+                        placeholder="Tell us about your memecoin..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {error && <div>{error}</div>}
+
+              {prediction && (
+                <>
+                  {prediction.output && (
+                    <div className="image-wrapper mt-5">
+                      <Image
+                        src={prediction.output[prediction.output.length - 1]}
+                        alt="output"
+                        sizes="100vw"
+                        height={768}
+                        width={768}
+                      />
+                    </div>
+                  )}
+                  <p className="py-3 text-sm opacity-50">status: {prediction.status}</p>
+                </>
+              )}
+
+              <Button className="w-full" onSubmit={handleSubmit}>
+                Generate Meme
+              </Button>
+            </form>
+          </Form> */}
+
+<form className="w-full flex" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className="flex-grow"
+          name="prompt"
+          placeholder="Enter a prompt to display an image"
+        />
+        <button className="button" type="submit">
+          Go!
+        </button>
+      </form>
+        </CardContent>
+      </Card>
+
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Final Steps</CardTitle>
           <CardDescription>
             Fill in the details below to launch your own memecoin
           </CardDescription>
@@ -110,40 +224,6 @@ export default function CreatePage() {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="totalSupply"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Total Supply</FormLabel>
-                    <FormControl>
-                      <Input placeholder="1000000000" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      The total number of tokens to create
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Token Image URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://..." {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Provide a URL for your token's image
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
