@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Rocket, TrendingUp, Shield } from "lucide-react";
 import Link from "next/link";
+import { ethers } from "ethers";
+import { PrivyProvider } from "@privy-io/react-auth";
 
 export default function Home() {
+  const app_id = "cm3jx7dfj071frmti0390p7cc";
+
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
       <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-16 bg-gradient-to-b from-background to-secondary/20">
@@ -10,7 +14,8 @@ export default function Home() {
           Launch Your Memecoin to the Moon 🚀
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mb-8">
-          Create, launch, and trade memecoins in minutes. Join the next generation of crypto innovation.
+          Create, launch, and trade memecoins in minutes. Join the next
+          generation of crypto innovation.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
           <Link href="/create">
