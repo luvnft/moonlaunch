@@ -4,10 +4,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Rocket, Coins, User, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
-import { PrivyProvider } from "@privy-io/react-auth";
-
-export default function Navbar() {
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+export default function Navbar({
+  connect_wallet,
+}: {
+  connect_wallet: () => void;
+}) {
   const { theme, setTheme } = useTheme();
+  const { wallets } = useWallets();
 
   return (
     <nav className="border-b">
@@ -39,7 +43,11 @@ export default function Navbar() {
             </Button>
           </Link>
 
-          <Button variant="ghost" className="flex items-center">
+          <Button
+            variant="ghost"
+            className="flex items-center"
+            onClick={connect_wallet}
+          >
             <User className="mr-2 h-4 w-4" />
             Connect Wallet
           </Button>
