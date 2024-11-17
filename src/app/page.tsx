@@ -20,7 +20,7 @@ export default function Home() {
 
   // const [signer, setSigner] = useState<Signer | null>(null);
   const [provider, setProvider] = useState<any>(null);
-  const blockScoutURL = "";
+  const blockScoutURL = "https://eth-sepolia.blockscout.com/";
 
   const get_price_eth = async()=>{
     const contract = new ethers.Contract(Chronicle, Chronicle_ETH, signer);
