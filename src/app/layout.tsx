@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { SignerProvider } from "./context/signerContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,17 +20,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="min-h-screen bg-background">
-            <main>{children}</main>
-          </div>
-          <Toaster />
-        </ThemeProvider>
+        <SignerProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="min-h-screen bg-background">
+              <main>{children}</main>
+            </div>
+            <Toaster />
+          </ThemeProvider>
+        </SignerProvider>
       </body>
     </html>
   );
