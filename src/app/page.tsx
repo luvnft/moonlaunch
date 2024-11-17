@@ -68,7 +68,6 @@ export default function Home() {
   return (
     <>
       <Navbar connect_wallet={connect_wallet} />
-      <button onClick={create_token}>Click me</button>
       <br />
       <div className="flex flex-col min-h-[calc(100vh-4rem)]">
         <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-16 bg-gradient-to-b from-background to-secondary/20">
