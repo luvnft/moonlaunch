@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-// import { TokenData } from "@/types/token";
+import { TokenData } from "@/types/token";
 
 export function TokenTrading({ token }: { token: TokenData }) {
   const [amount, setAmount] = useState("");

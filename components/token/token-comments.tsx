@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-// import { TokenData } from "@/types/token";
+import { TokenData } from "@/types/token";
 
 export function TokenComments({ token }: { token: TokenData }) {
   const [comment, setComment] = useState("");
