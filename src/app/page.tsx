@@ -19,7 +19,6 @@ export default function Home() {
   const blockScoutURL = "";
 
   const connect_wallet = async () => {
-    console.log("Wallet Connected");
     let signer = null;
 
     let provider;
@@ -36,20 +35,6 @@ export default function Home() {
     console.log("address: ", signer?.address);
   };
 
-  const create_token = async (data: any) => {
-    const contract = new ethers.Contract(
-      TokenFactoryAddr,
-      TokenFactoryABI.abi as InterfaceAbi,
-      signer
-    );
-
-    console.log({ contract });
-
-    const addr = await signer?.getAddress();
-    const res = await contract.create_token(10_000_000, "sample", "SMBL");
-    console.log({ res });
-  };
-
   useEffect(() => {
     connect_wallet();
   }, []);
@@ -57,8 +42,6 @@ export default function Home() {
   return (
     <>
       <Navbar connect_wallet={connect_wallet} />
-      <button onClick={create_token}>Click me</button>
-      <br />
       <div className="flex flex-col min-h-[calc(100vh-4rem)]">
         <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-16 bg-gradient-to-b from-background to-secondary/20">
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">

@@ -81,12 +81,17 @@ export default function CreatePage() {
       TokenFactoryABI.abi as InterfaceAbi,
       signer
     );
-
-    console.log({ contract });
-
     const addr = await signer?.getAddress();
-    const res = await contract.create_token(10_000_000, data.name, data.ticker);
-    console.log({ res });
+    const res = await contract.create_token(
+      data.initial_supply,
+      data.name,
+      data.ticker
+    );
+
+    await res.wait();
+    const token_id = await contract.userToTokenId(addr);
+    const token_url = await contract.userToMintedToken(addr, token_id);
+    console.log({ token_url });
   };
 
   const sleep = (ms: any) => new Promise((r) => setTimeout(r, ms));
