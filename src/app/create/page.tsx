@@ -96,7 +96,7 @@ export default function CreatePage() {
 
   const sleep = (ms: any) => new Promise((r) => setTimeout(r, ms));
 
-  const [finalImage, setFinalImage] = useState(true);
+  const [finalImage, setFinalImage] = useState(false);
   const [prediction, setPrediction] = useState<any>(null);
   const [error, setError] = useState(null);
 

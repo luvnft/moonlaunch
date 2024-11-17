@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Twitter, Telegram, Globe } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-// import { TokenData } from "@/types/app/token";
+import { TokenData } from "@/types/app/token";
 
 
 export function TokenInfo() {
