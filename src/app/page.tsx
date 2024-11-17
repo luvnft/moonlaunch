@@ -46,12 +46,6 @@ export default function Home() {
     console.log("address: ", signer?.address);
   };
 
-<<<<<<< HEAD
-  useEffect(()=>{
-    connect_wallet();
-    get_price_eth();
-  }, [])
-=======
   const create_token = async (data: any) => {
     const contract = new ethers.Contract(
       TokenFactoryAddr,
@@ -68,8 +62,8 @@ export default function Home() {
 
   useEffect(() => {
     connect_wallet();
+    // get_price_eth();
   }, []);
->>>>>>> fbbcf37299fea795455beec59f0c53b27d86aac1
 
   return (
     <>
