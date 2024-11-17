@@ -24,7 +24,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/navbar";
 import { useSigner } from "../context/signerContext";
@@ -33,6 +33,7 @@ import TokenFactoryABI from "../../../abi/TokenFactory.json";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
+  initial_supply: z.string().min(2).max(50),
   ticker: z.string().min(2).max(10),
   description: z.string().min(2).max(500).optional(),
   image: z.string().url("Must be a valid URL"),
@@ -60,13 +61,33 @@ export default function CreatePage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    toast({
-      title: "Token Creation Initiated",
-      description: "Your memecoin is being created. Please wait...",
-    });
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (signer) {
+      console.log({ values });
+      await create_token(values);
+      toast({
+        title: "Token Creation Initiated",
+        description: "Your memecoin is being created. Please wait...",
+      });
+      console.log(values);
+    } else {
+      alert("Please Connect Your Wallet");
+    }
   }
+
+  const create_token = async (data: any) => {
+    const contract = new ethers.Contract(
+      TokenFactoryAddr,
+      TokenFactoryABI.abi as InterfaceAbi,
+      signer
+    );
+
+    console.log({ contract });
+
+    const addr = await signer?.getAddress();
+    const res = await contract.create_token(10_000_000, data.name, data.ticker);
+    console.log({ res });
+  };
 
   const sleep = (ms: any) => new Promise((r) => setTimeout(r, ms));
 
@@ -75,6 +96,7 @@ export default function CreatePage() {
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e: any) => {
+    console.log("handleSubmit");
     e.preventDefault();
     console.log("run");
     const response = await fetch("/api/predictions", {
@@ -111,23 +133,6 @@ export default function CreatePage() {
       console.log({ prediction: prediction });
       setPrediction(prediction);
     }
-  };
-
-  const create_token = async () => {
-    const contract = new ethers.Contract(
-      TokenFactoryAddr,
-      TokenFactoryABI.abi as InterfaceAbi,
-      signer
-    );
-
-    const addr = await signer?.getAddress();
-    console.log({ addr });
-    const res = await contract.create_token(
-      10_000_000,
-      "sample token",
-      "SMPLTKN"
-    );
-    console.log({ res });
   };
 
   return (
@@ -248,6 +253,23 @@ export default function CreatePage() {
                         <FormLabel>Ticker Symbol</FormLabel>
                         <FormControl>
                           <Input placeholder="MOON" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          A short symbol for your token (e.g., BTC, ETH)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="initial_supply"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>initial_supply</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Initial Supply" {...field} />
                         </FormControl>
                         <FormDescription>
                           A short symbol for your token (e.g., BTC, ETH)

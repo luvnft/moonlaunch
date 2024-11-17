@@ -1,6 +1,6 @@
+"use client";
 import { Signer } from "ethers";
 import React, { createContext, ReactNode, useContext, useState } from "react";
-
 interface SignerContextType {
   signer: Signer | undefined;
   setSigner: React.Dispatch<React.SetStateAction<Signer | undefined>>;
