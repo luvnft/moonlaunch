@@ -5,19 +5,27 @@ import { Rocket, TrendingUp, Shield } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
 import { Interface, Signer, InterfaceAbi } from "ethers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useSigner } from "./context/signerContext";
+import Chronicle from "../../abi/Chronicle.json";
 
 export default function Home() {
   const app_id = "cm3jx7dfj071frmti0390p7cc";
   const TokenFactoryAddr = "0x42b93a5eE5839Ff8436c3CF1F310b07fAeCc0834";
+  const Chronicle_ETH = "0x787c701b7303D0913f9c5c4Eb1F2DA347781b4b5";
 
-  const { signer, setSigner } = useSigner();
+  // const { signer, setSigner } = useSigner();
 
   // const [signer, setSigner] = useState<Signer | null>(null);
   const [provider, setProvider] = useState<any>(null);
   const blockScoutURL = "";
+
+  const get_price_eth = async()=>{
+    const contract = new ethers.Contract(Chronicle, Chronicle_ETH, signer);
+    let price =  await contract.read();
+    console.log({price})
+  }
 
   const connect_wallet = async () => {
     let signer = null;
@@ -33,6 +41,11 @@ export default function Home() {
       setSigner(signer);
     }
   };
+
+  useEffect(()=>{
+    connect_wallet();
+    get_price_eth();
+  }, [])
 
   return (
     // <PrivyProvidern

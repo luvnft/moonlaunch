@@ -44,7 +44,7 @@ const formSchema = z.object({
 export default function CreatePage() {
   const TokenFactoryAddr = "0x42b93a5eE5839Ff8436c3CF1F310b07fAeCc0834";
 
-  const { signer } = useSigner();
+  // const { signer } = useSigner();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
